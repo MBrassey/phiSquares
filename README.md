@@ -1,2 +1,3 @@
 # phiSquares
-The underlying software behind the Ethereum NFT collection phisquares, uses nature's most beautiful algorithms, including the Golden Ratio, Fibonacci sequence, and Phi offsets, to produce images imbued with motion, life, and elegance.
+
+Explore the aesthetically pleasing placement and orientation of squares using the golden ratio, phi, and the Fibonacci sequence.

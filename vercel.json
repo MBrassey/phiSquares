@@ -1,0 +1,9 @@
+{
+    "version": 2,
+    "routes": [
+      { "src": "/favicon.ico", "dest": "/favicon.ico" },
+      { "src": "/api/generate", "dest": "/api/index.js" },
+      { "src": "/", "dest": "/api/index.js" }
+    ]
+  }
+  
