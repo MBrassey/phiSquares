@@ -4,13 +4,13 @@
     "description": "The underlying software behind the Ethereum NFT collection phisquares, uses nature's most beautiful algorithms, including the Golden Ratio, Fibonacci Sequence, and Phi Offsets, to produce images imbued with motion, life, and elegance.",
     "main": "index.js",
     "scripts": {
-      "start": "node api/index.js"
+        "start": "node api/index.js"
     },
     "dependencies": {
-      "canvas": "^2.8.0",
-      "express": "^4.17.1"
+        "canvas": "^2.8.0",
+        "express": "^4.17.1",
+        "highlight.js": "^11.9.0"
     },
     "author": "",
     "license": "CC0-1.0"
-  }
-  
+}

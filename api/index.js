@@ -1,7 +1,8 @@
 const express = require('express');
 const { createCanvas } = require('canvas');
 const path = require('path');
-
+const fs = require('fs');
+const hljs = require('highlight.js');
 const app = express();
 const PORT = process.env.PORT || 443;
 
@@ -176,6 +177,8 @@ function generateAlphaFractalImage() {
 app.get('/', async (req, res) => {
   const { image, specs } = generateFractalImage();
 
+  const highlightedSpecs = hljs.highlight(JSON.stringify(specs, null, 2), { language: 'json' }).value;
+
   const html = `
     <!DOCTYPE html>
     <html>
@@ -184,6 +187,7 @@ app.get('/', async (req, res) => {
       <meta name="description" content="Explore the aesthetically pleasing placement and orientation of squares using the Golden Ratio, Phi, and the Fibonacci Sequence.">
       <meta property="og:image" content="phiSquares.png">
       <link rel="icon" href="/favicon.ico" type="image/x-icon">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/vs2015.min.css">
       <style>
         @font-face {
           font-family: 'Tron';
@@ -241,6 +245,7 @@ app.get('/', async (req, res) => {
           max-width: 800px;
           box-shadow: 0 8px 18px rgba(0, 0, 0, 0.8);
           border-radius: 12px;
+          cursor: pointer;
         }
         .description-box {
           background: #303031;
@@ -273,7 +278,7 @@ app.get('/', async (req, res) => {
           color: #FFB386;
           white-space: pre-wrap;
           position: relative;
-          font-family: 'Tron', Arial, sans-serif;
+          font-family: 'Consolas', 'Courier New', Courier, monospace;
           box-shadow: 0 8px 18px rgba(0, 0, 0, 0.8);
           border-radius: 12px;
           width: 100%;
@@ -281,6 +286,12 @@ app.get('/', async (req, res) => {
           margin-top: 20px;
           max-height: 360px;
           overflow-y: auto;
+          text-shadow: 0 0 8px rgba(255, 179, 134, 0.8);
+        }
+        pre code {
+          display: block;
+          overflow-x: auto;
+          padding: 10px;
         }
         pre::-webkit-scrollbar {
           width: 12px;
@@ -326,12 +337,15 @@ app.get('/', async (req, res) => {
             phiSquares Alpha
           </button>
         </div>
-        <img id="generated-image" src="data:image/png;base64,${image.toString('base64')}" alt="Generated Image">
+        <a href="https://opensea.io/collection/phisquares" target="_blank">
+          <img id="generated-image" src="data:image/png;base64,${image.toString('base64')}" alt="Generated Image">
+        </a>
       </div>
       <div class="description-box">
         The process begins with a canvas where the algorithm sets the background color and adds an outer glow effect around the border. Squares are drawn in layers, each smaller than the previous, following the golden ratio. The position, color, angle, opacity, and glow intensity of each square are determined using randomization and calculations based on the Golden Ratio and the Fibonacci Sequence. Each square's placement and rotation are influenced by Phi Offsets, and their visual properties include alternating glow intensities and z-index adjustments. The interplay of these organic ratios results in images imbued with motion, life, and elegance. Each piece of the collection represents a harmonious fusion of art and science, showcasing the intricate and delightful variations achievable only through these mathematical principles.
       </div>
-      <pre id="json-specs"><code>${JSON.stringify(specs, null, 2)}</code><button class="copy-button" onclick="copyToClipboard()">Copy JSON</button></pre>
+      <pre id="json-specs"><code class="json">${highlightedSpecs}</code><button class="copy-button" onclick="copyToClipboard()">Copy JSON</button></pre>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
       <script>
         function copyToClipboard() {
           const jsonSpecs = document.getElementById('json-specs').innerText;
@@ -349,7 +363,8 @@ app.get('/', async (req, res) => {
             }
             const data = await response.json();
             document.getElementById('generated-image').src = 'data:image/png;base64,' + data.image;
-            document.getElementById('json-specs').innerHTML = '<code>' + JSON.stringify(data.specs, null, 2) + '</code><button class="copy-button" onclick="copyToClipboard()">Copy JSON</button>';
+            const highlightedSpecs = hljs.highlight(JSON.stringify(data.specs, null, 2), { language: 'json' }).value;
+            document.getElementById('json-specs').innerHTML = '<code class="json">' + highlightedSpecs + '</code><button class="copy-button" onclick="copyToClipboard()">Copy JSON</button>';
           } catch (error) {
             console.error('Error fetching image:', error);
             alert('Failed to load image. Please try again later.');
