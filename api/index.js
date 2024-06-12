@@ -181,7 +181,7 @@ app.get('/', async (req, res) => {
     <html>
     <head>
       <title>phiSquares</title>
-      <meta name="description" content="Explore the aesthetically pleasing placement and orientation of squares using the golden ratio, phi, and the Fibonacci sequence.">
+      <meta name="description" content="Explore the aesthetically pleasing placement and orientation of squares using the Golden Ratio, Phi, and the Fibonacci Sequence.">
       <meta property="og:image" content="phiSquares.png">
       <link rel="icon" href="/favicon.ico" type="image/x-icon">
       <style>
@@ -230,7 +230,7 @@ app.get('/', async (req, res) => {
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 1.5em;
+          font-size: 1.2em;
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
         .button-icon {
@@ -252,8 +252,19 @@ app.get('/', async (req, res) => {
           box-shadow: 0 8px 18px rgba(0, 0, 0, 0.8);
           border-radius: 12px;
           width: 100%;
-          max-width: 840px;
+          max-width: 860px;
           margin-top: 20px;
+        }
+        @media (max-width: 600px) {
+          .description-box {
+            padding: 30px;
+          }
+          .button-container {
+            margin-bottom: 30px;
+          }
+          .button {
+            font-size: 1.2em;
+          }
         }
         pre {
           margin-top: 40px;
@@ -266,15 +277,31 @@ app.get('/', async (req, res) => {
           box-shadow: 0 8px 18px rgba(0, 0, 0, 0.8);
           border-radius: 12px;
           width: 100%;
-          max-width: 840px;
+          max-width: 860px;
           margin-top: 20px;
-          max-height: 400px;
+          max-height: 360px;
           overflow-y: auto;
         }
+        pre::-webkit-scrollbar {
+          width: 12px;
+        }
+        pre::-webkit-scrollbar-thumb {
+          background: #303030;
+          border-radius: 6px;
+        }
+        pre::-webkit-scrollbar-track {
+          background: #1C1C1D;
+        }
+        @media (max-width: 600px) {
+          pre {
+            padding: 30px;
+          }
+        }
         .copy-button {
+          font-size: .8em;
           position: absolute;
           top: 10px;
-          right: 10px;
+          right: 20px;
           background-color: #98D5F6;
           border: none;
           color: #1C1C1D;
@@ -282,7 +309,7 @@ app.get('/', async (req, res) => {
           cursor: pointer;
           border-radius: 5px;
           font-family: 'Tron', Arial, sans-serif;
-          padding: 5px 10px;
+          padding: 10px;
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
       </style>
@@ -302,7 +329,7 @@ app.get('/', async (req, res) => {
         <img id="generated-image" src="data:image/png;base64,${image.toString('base64')}" alt="Generated Image">
       </div>
       <div class="description-box">
-        The process begins with a canvas where the algorithm sets the background color and adds an outer glow effect around the border. Squares are drawn in layers, each smaller than the previous, following the golden ratio. The position, color, angle, opacity, and glow intensity of each square are determined using randomization and calculations based on the golden ratio and the Fibonacci sequence. Each square's placement and rotation are influenced by phi offsets, and their visual properties include alternating glow intensities and z-index adjustments. The interplay of these organic ratios results in images imbued with motion, life, and elegance. Each piece of the collection represents a harmonious fusion of art and science, showcasing the intricate and delightful variations achievable only through these mathematical principles.
+        The process begins with a canvas where the algorithm sets the background color and adds an outer glow effect around the border. Squares are drawn in layers, each smaller than the previous, following the golden ratio. The position, color, angle, opacity, and glow intensity of each square are determined using randomization and calculations based on the Golden Ratio and the Fibonacci Sequence. Each square's placement and rotation are influenced by Phi Offsets, and their visual properties include alternating glow intensities and z-index adjustments. The interplay of these organic ratios results in images imbued with motion, life, and elegance. Each piece of the collection represents a harmonious fusion of art and science, showcasing the intricate and delightful variations achievable only through these mathematical principles.
       </div>
       <pre id="json-specs"><code>${JSON.stringify(specs, null, 2)}</code><button class="copy-button" onclick="copyToClipboard()">Copy JSON</button></pre>
       <script>
