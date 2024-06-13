@@ -12,13 +12,13 @@ const goldenRatio = 1.618;
 const phi = (1 + Math.sqrt(5)) / 2;
 
 const colors = [
-  '#B5CEA8', '#98D5F6', '#FFB386', '#FF6961', '#303031', 
-  '#8A2BE2', '#5F9EA0', '#7FFF00', '#6495ED', '#D2691E', 
-  '#FF7F50', '#DC143C', '#00CED1', '#9400D3', '#FFD700', 
+  '#B5CEA8', '#98D5F6', '#FFB386', '#FF6961', '#303031',
+  '#8A2BE2', '#5F9EA0', '#7FFF00', '#6495ED', '#D2691E',
+  '#FF7F50', '#DC143C', '#00CED1', '#9400D3', '#FFD700',
   '#808080', '#00FF00', '#800080', '#4682B4', '#EE82EE'
 ];
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname)));
 
 function generateRandomColor() {
   return colors[Math.floor(Math.random() * colors.length)];
@@ -176,177 +176,55 @@ function generateAlphaFractalImage() {
 
 app.get('/', async (req, res) => {
   const { image, specs } = generateFractalImage();
-
+  const css = fs.readFileSync(path.join(__dirname, 'styles.css'), 'utf8');
   const highlightedSpecs = hljs.highlight(JSON.stringify(specs, null, 2), { language: 'json' }).value;
 
   const html = `
     <!DOCTYPE html>
     <html>
     <head>
-      <title>phiSquares</title>
+      <title>Generate Squares</title>
       <meta name="description" content="Explore the aesthetically pleasing placement and orientation of squares using the Golden Ratio, Phi, and the Fibonacci Sequence.">
       <meta property="og:image" content="phiSquares.png">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
       <link rel="icon" href="/favicon.ico" type="image/x-icon">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/vs2015.min.css">
-      <style>
-        @font-face {
-          font-family: 'Tron';
-          src: url('/fonts/Tron.woff') format('woff');
-        }
-        body {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          background-color: #1C1C1D;
-          color: #98D5F6;
-          font-family: 'Tron', Arial, sans-serif;
-          padding: 20px;
-          margin-top: 10px;
-        }
-        .container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          background: #303031;
-          padding: 40px;
-          border-radius: 12px;
-          box-shadow: 0 8px 18px rgba(0, 0, 0, 0.8);
-          max-width: 820px;
-          width: 100%;
-        }
-        .button-container {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 10px;
-          margin-bottom: 20px;
-          width: calc(100% - 20px);
-        }
-        button {
-          flex: 1 1 calc(50% - 10px);
-          padding: 15px;
-          background-color: #98D5F6;
-          border: none;
-          color: #1C1C1D;
-          font-weight: bold;
-          cursor: pointer;
-          border-radius: 5px;
-          font-family: 'Tron', Arial, sans-serif;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 1.2em;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-        .button-icon {
-          margin-right: 10px;
-        }
-        img {
-          width: 100%;
-          max-width: 800px;
-          box-shadow: 0 8px 18px rgba(0, 0, 0, 0.8);
-          border-radius: 12px;
-          cursor: pointer;
-        }
-        .description-box {
-          background: #303031;
-          padding: 20px;
-          color: #FFB386;
-          text-align: left;
-          white-space: pre-wrap;
-          font-family: 'Tron', Arial, sans-serif;
-          box-shadow: 0 8px 18px rgba(0, 0, 0, 0.8);
-          border-radius: 12px;
-          width: 100%;
-          max-width: 860px;
-          margin-top: 20px;
-        }
-        @media (max-width: 600px) {
-          .description-box {
-            padding: 30px;
-          }
-          .button-container {
-            margin-bottom: 30px;
-          }
-          .button {
-            font-size: 1.2em;
-          }
-        }
-        pre {
-          margin-top: 40px;
-          background: #303031;
-          padding: 20px;
-          color: #FFB386;
-          white-space: pre-wrap;
-          position: relative;
-          font-family: 'Consolas', 'Courier New', Courier, monospace;
-          box-shadow: 0 8px 18px rgba(0, 0, 0, 0.8);
-          border-radius: 12px;
-          width: 100%;
-          max-width: 860px;
-          margin-top: 20px;
-          max-height: 360px;
-          overflow-y: auto;
-          text-shadow: 0 0 8px rgba(255, 179, 134, 0.8);
-        }
-        pre code {
-          display: block;
-          overflow-x: auto;
-          padding: 10px;
-        }
-        pre::-webkit-scrollbar {
-          width: 12px;
-        }
-        pre::-webkit-scrollbar-thumb {
-          background: #303030;
-          border-radius: 6px;
-        }
-        pre::-webkit-scrollbar-track {
-          background: #1C1C1D;
-        }
-        @media (max-width: 600px) {
-          pre {
-            padding: 30px;
-          }
-        }
-        .copy-button {
-          font-size: .8em;
-          position: absolute;
-          top: 10px;
-          right: 20px;
-          background-color: #98D5F6;
-          border: none;
-          color: #1C1C1D;
-          font-weight: bold;
-          cursor: pointer;
-          border-radius: 5px;
-          font-family: 'Tron', Arial, sans-serif;
-          padding: 10px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-      </style>
+      <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
+      <style>${css}</style>
     </head>
     <body>
       <div class="container">
         <div class="button-container">
-          <button id="phiSquares-button" onclick="loadImage('phiSquares')">
-            <svg class="button-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M17.65 6.35C16.2 4.9 14.21 4 12 4 7.58 4 4 7.58 4 12s3.58 8 8 8c3.93 0 7.19-2.86 7.88-6.65h-2.08c-.64 2.33-2.74 4-5.32 4-3.04 0-5.5-2.46-5.5-5.5s2.46-5.5 5.5-5.5c1.53 0 2.9.63 3.88 1.62l-2.88 2.88H20V4l-2.35 2.35z"/></svg>
-            phiSquares
-          </button>
           <button id="phiSquaresAlpha-button" onclick="loadImage('phiSquaresAlpha')">
             <svg class="button-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M17.65 6.35C16.2 4.9 14.21 4 12 4 7.58 4 4 7.58 4 12s3.58 8 8 8c3.93 0 7.19-2.86 7.88-6.65h-2.08c-.64 2.33-2.74 4-5.32 4-3.04 0-5.5-2.46-5.5-5.5s2.46-5.5 5.5-5.5c1.53 0 2.9.63 3.88 1.62l-2.88 2.88H20V4l-2.35 2.35z"/></svg>
-            phiSquares Alpha
+            Generate 1.0
+          </button>
+          <button id="phiSquares-button" onclick="loadImage('phiSquares')">
+            <svg class="button-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M17.65 6.35C16.2 4.9 14.21 4 12 4 7.58 4 4 7.58 4 12s3.58 8 8 8c3.93 0 7.19-2.86 7.88-6.65h-2.08c-.64 2.33-2.74 4-5.32 4-3.04 0-5.5-2.46-5.5-5.5s2.46-5.5 5.5-5.5c1.53 0 2.9.63 3.88 1.62l-2.88 2.88H20V4l-2.35 2.35z"/></svg>
+            Generate 2.0
           </button>
         </div>
         <a href="https://opensea.io/collection/phisquares" target="_blank">
           <img id="generated-image" src="data:image/png;base64,${image.toString('base64')}" alt="Generated Image">
         </a>
       </div>
-      <div class="description-box">
-        The process begins with a canvas where the algorithm sets the background color and adds an outer glow effect around the border. Squares are drawn in layers, each smaller than the previous, following the golden ratio. The position, color, angle, opacity, and glow intensity of each square are determined using randomization and calculations based on the Golden Ratio and the Fibonacci Sequence. Each square's placement and rotation are influenced by Phi Offsets, and their visual properties include alternating glow intensities and z-index adjustments. The interplay of these organic ratios results in images imbued with motion, life, and elegance. Each piece of the collection represents a harmonious fusion of art and science, showcasing the intricate and delightful variations achievable only through these mathematical principles.
-      </div>
+      <div class="description-box" id="description-box"></div>
       <pre id="json-specs"><code class="json">${highlightedSpecs}</code><button class="copy-button" onclick="copyToClipboard()">Copy JSON</button></pre>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
       <script>
+        const text = "The process starts with a canvas where the algorithm sets the background and adds a glowing border. Squares are layered, each smaller than the last, following the Golden Ratio. Randomization and Fibonacci Sequence calculations determine the position, color, angle, opacity, and glow of each square. Phi Offsets influence placement and rotation, while alternating glow intensities and z-index adjustments enhance visual properties. These ratios create images with motion, life, and elegance. Each piece represents a blend of art and science, showcasing the intricate and delightful variations achieved only through these mathematical principles.";
+        let index = 0;
+        
+        function typeWriter() {
+          if (index < text.length) {
+            document.getElementById("description-box").innerHTML += text.charAt(index);
+            index++;
+            setTimeout(typeWriter, 22);
+          }
+        }
+        
+        window.onload = typeWriter;
+        
         function copyToClipboard() {
           const jsonSpecs = document.getElementById('json-specs').innerText;
           const jsonText = jsonSpecs.replace(/Copy JSON$/, '').trim();
