@@ -74,14 +74,7 @@ function generateFractalImage() {
   const ctx = canvas.getContext('2d');
   const specs = [];
 
-  ctx.fillStyle = '#1C1C1D';
-  ctx.fillRect(0, 0, width, height);
-
-  ctx.shadowBlur = 30;
-  ctx.shadowColor = 'rgba(152, 213, 246, 0.94)';
-  ctx.strokeStyle = 'rgba(152, 213, 246, 0.94)';
-  ctx.lineWidth = 20;
-  ctx.strokeRect(0, 0, width, height);
+  ctx.clearRect(0, 0, width, height);
 
   let currentSize = width;
   let step = 0;
@@ -142,6 +135,8 @@ function generateAlphaFractalImage() {
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext('2d');
   const specs = [];
+
+  ctx.clearRect(0, 0, width, height);
 
   let currentWidth = width;
   let currentHeight = height;
@@ -212,7 +207,7 @@ app.get('/', async (req, res) => {
       <pre id="json-specs"><code class="json">${highlightedSpecs}</code><button class="copy-button" onclick="copyToClipboard()">Copy JSON</button></pre>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
       <script>
-        const text = "The process starts with a canvas where the algorithm sets the background and adds a glowing border. Squares are layered, each smaller than the last, following the Golden Ratio. Randomization and Fibonacci Sequence calculations determine the position, color, angle, opacity, and glow of each square. Phi Offsets influence placement and rotation, while alternating glow intensities and z-index adjustments enhance visual properties. These ratios create images with motion, life, and elegance. Each piece represents a blend of art and science, showcasing the intricate and delightful variations achieved only through these mathematical principles.";
+        const text = "The process begins with a transparent canvas where the algorithm layers squares, each progressively smaller, guided by the Golden Ratio. Using randomization and Fibonacci Sequence calculations, the position, color, angle, opacity, and glow of each square are determined. Phi offsets influence placement and rotation, while alternating glow intensities and z-index adjustments enhance visual depth. These ratios craft images imbued with motion, life, and elegance, blending art and science to showcase intricate and delightful variations achieved only through mathematical principles.";
         let index = 0;
         
         function typeWriter() {
