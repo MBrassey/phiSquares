@@ -1,7 +1,5 @@
 const express = require('express');
-const {
-    createCanvas
-} = require('canvas');
+const { createCanvas } = require('canvas');
 const path = require('path');
 const fs = require('fs');
 const hljs = require('highlight.js');
@@ -178,14 +176,9 @@ function generateAlphaFractalImage() {
 }
 
 app.get('/', async (req, res) => {
-    const {
-        image,
-        specs
-    } = generateFractalImage();
+    const { image, specs } = generateFractalImage();
     const css = fs.readFileSync(path.join(__dirname, 'styles.css'), 'utf8');
-    const highlightedSpecs = hljs.highlight(JSON.stringify(specs, null, 2), {
-        language: 'json'
-    }).value;
+    const highlightedSpecs = hljs.highlight(JSON.stringify(specs, null, 2), { language: 'json' }).value;
 
     const html = `
     <!DOCTYPE html>
@@ -199,6 +192,23 @@ app.get('/', async (req, res) => {
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/vs2015.min.css">
       <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
       <style>${css}</style>
+      <style>
+        .quote-box {
+          position: fixed;
+          bottom: 20px;
+          left: 50%;
+          width: 80%;
+          transform: translateX(-50%);
+          background: rgba(0, 0, 0, 0.7);
+          color: #fff;
+          padding: 10px 20px;
+          border-radius: 10px;
+          font-family: 'Source Code Pro', monospace;
+          font-size: 16px;
+          opacity: 0;
+          transition: opacity 1s ease-in-out;
+        }
+      </style>
     </head>
     <body>
       <div class="container">
@@ -218,53 +228,75 @@ app.get('/', async (req, res) => {
       </div>
       <div class="description-box" id="description-box"></div>
       <pre id="json-specs"><code class="json">${highlightedSpecs}</code><button class="copy-button" onclick="copyToClipboard()">Copy JSON</button></pre>
+      <div class="quote-box" id="quote-box-1">"Sometimes these remind me of actual star formations or constellations."</div>
+      <div class="quote-box" id="quote-box-2">"It's crazy, something like 80% of the phiSquares I generate look stunning, I can't stop admiring them."</div>
+      <div class="quote-box" id="quote-box-3">"These images have a sense of movement and life, I even see faces or critters in some of them."</div>
+      <div class="quote-box" id="quote-box-4">"For being generative art, these really capture an organic, life-like feel."</div>
+      <div class="quote-box" id="quote-box-5">"I like the glowy squares."</div>
+      <div class="quote-box" id="quote-box-6">"The use of the golden ratio and Fibonacci sequence creates a perfect balance of harmony and chaos."</div>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
-<script>
-const text1 = "The process begins with a transparent canvas where the algorithm layers squares, each progressively smaller, guided by the Golden Ratio. Using randomization and Fibonacci Sequence calculations, the position, color, angle, opacity, and glow of each square are determined. Phi offsets influence placement and rotation, while alternating glow intensities and z-index adjustments enhance visual depth.";
-const text2 = "These ratios craft images imbued with motion, life, and elegance, blending art and science to showcase intricate and delightful variations achieved only through these mathematical principles.";
-let index = 0;
-let currentText = text1;
+      <script>
+        const text1 = "The process begins with a transparent canvas where the algorithm layers squares, each progressively smaller, guided by the Golden Ratio. Using randomization and Fibonacci Sequence calculations, the position, color, angle, opacity, and glow of each square are determined. Phi offsets influence placement and rotation, while alternating glow intensities and z-index adjustments enhance visual depth.";
+        const text2 = "These ratios craft images imbued with motion, life, and elegance, blending art and science to showcase intricate and delightful variations achieved only through these mathematical principles.";
+        let index = 0;
+        let currentText = text1;
 
-function typeWriter() {
-  if (index < currentText.length) {
-    document.getElementById("description-box").innerHTML += currentText.charAt(index);
-    index++;
-    setTimeout(typeWriter, 22);
-  } else if (currentText === text1) {
-    document.getElementById("description-box").innerHTML += '<br><br>';
-    currentText = text2;
-    index = 0;
-    setTimeout(typeWriter, 22);
-  }
-}
+        function typeWriter() {
+          if (index < currentText.length) {
+            document.getElementById("description-box").innerHTML += currentText.charAt(index);
+            index++;
+            setTimeout(typeWriter, 22);
+          } else if (currentText === text1) {
+            document.getElementById("description-box").innerHTML += '<br><br>';
+            currentText = text2;
+            index = 0;
+            setTimeout(typeWriter, 22);
+          }
+        }
 
-window.onload = typeWriter;
+        window.onload = typeWriter;
 
-function copyToClipboard() {
-  const jsonSpecs = document.getElementById('json-specs').innerText;
-  const jsonText = jsonSpecs.replace(/Copy JSON$/, '').trim();
-  navigator.clipboard.writeText(jsonText).then(() => {
-    alert('JSON copied to clipboard');
-  });
-}
+        function copyToClipboard() {
+          const jsonSpecs = document.getElementById('json-specs').innerText;
+          const jsonText = jsonSpecs.replace(/Copy JSON$/, '').trim();
+          navigator.clipboard.writeText(jsonText).then(() => {
+            alert('JSON copied to clipboard');
+          });
+        }
 
-async function loadImage(type) {
-  try {
-    const response = await fetch('/api/generate?type=' + type);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    const data = await response.json();
-    document.getElementById('generated-image').src = 'data:image/png;base64,' + data.image;
-    const highlightedSpecs = hljs.highlight(JSON.stringify(data.specs, null, 2), { language: 'json' }).value;
-    document.getElementById('json-specs').innerHTML = '<code class="json">' + highlightedSpecs + '</code><button class="copy-button" onclick="copyToClipboard()">Copy JSON</button>';
-  } catch (error) {
-    console.error('Error fetching image:', error);
-    alert('Failed to load image. Please try again later.');
-  }
-}
-</script>
+        async function loadImage(type) {
+          try {
+            const response = await fetch('/api/generate?type=' + type);
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            document.getElementById('generated-image').src = 'data:image/png;base64,' + data.image;
+            const highlightedSpecs = hljs.highlight(JSON.stringify(data.specs, null, 2), { language: 'json' }).value;
+            document.getElementById('json-specs').innerHTML = '<code class="json">' + highlightedSpecs + '</code><button class="copy-button" onclick="copyToClipboard()">Copy JSON</button>';
+          } catch (error) {
+            console.error('Error fetching image:', error);
+            alert('Failed to load image. Please try again later.');
+          }
+        }
 
+        function showQuotes() {
+          const quotes = document.querySelectorAll('.quote-box');
+          let delay = 25000;
+          quotes.forEach((quote, index) => {
+            setTimeout(() => {
+              quote.style.opacity = '1';
+              setTimeout(() => {
+                quote.style.opacity = '0';
+              }, 5000);
+              delay += Math.random() * 10000 + 10000;
+            }, delay);
+          });
+        }
+
+        setInterval(showQuotes, 40000 * 6);
+        setTimeout(showQuotes, 25000);
+      </script>
     </body>
     </html>
   `;
@@ -273,25 +305,14 @@ async function loadImage(type) {
 });
 
 app.get('/api/generate', (req, res) => {
-    const {
-        type
-    } = req.query;
+    const { type } = req.query;
     let image, specs;
     if (type === 'phiSquaresAlpha') {
-        ({
-            image,
-            specs
-        } = generateAlphaFractalImage());
+        ({ image, specs } = generateAlphaFractalImage());
     } else {
-        ({
-            image,
-            specs
-        } = generateFractalImage());
+        ({ image, specs } = generateFractalImage());
     }
-    res.json({
-        image: image.toString('base64'),
-        specs
-    });
+    res.json({ image: image.toString('base64'), specs });
 });
 
 app.listen(PORT, () => {

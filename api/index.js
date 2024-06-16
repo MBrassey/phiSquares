@@ -10,6 +10,8 @@ const width = 800;
 const height = 800;
 const goldenRatio = 1.618;
 const phi = (1 + Math.sqrt(5)) / 2;
+const silverRatio = 2.414;
+const plasticNumber = 1.325;
 
 const colors = [
     '#B5CEA8', '#98D5F6', '#FFB386', '#FF6961', '#303031',
@@ -42,6 +44,22 @@ function generateFibonacci(n) {
         fib[i] = fib[i - 1] + fib[i - 2];
     }
     return fib[n];
+}
+
+function generateSilverSequence(n) {
+    const seq = [0, 1];
+    for (let i = 2; i <= n; i++) {
+        seq[i] = seq[i - 1] + 2 * seq[i - 2];
+    }
+    return seq[n];
+}
+
+function generatePlasticSequence(n) {
+    const seq = [1, 1, 1];
+    for (let i = 3; i <= n; i++) {
+        seq[i] = seq[i - 1] + seq[i - 2] + seq[i - 3];
+    }
+    return seq[n];
 }
 
 function drawBlock(ctx, x, y, size, color, angle, opacity, glow) {
@@ -175,8 +193,112 @@ function generateAlphaFractalImage() {
     };
 }
 
+function generateEnhancedFractalImage() {
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+    const specs = [];
+
+    ctx.clearRect(0, 0, width, height);
+
+    let currentSize = width;
+    let step = 0;
+    const startingCorner = Math.floor(Math.random() * 4);
+
+    let startX, startY;
+    switch (startingCorner) {
+        case 0:
+            startX = 0;
+            startY = 0;
+            break;
+        case 1:
+            startX = width - 1;
+            startY = 0;
+            break;
+        case 2:
+            startX = 0;
+            startY = height - 1;
+            break;
+        case 3:
+            startX = width - 1;
+            startY = height - 1;
+            break;
+    }
+
+    while (currentSize > 10) {
+        const color = generateRandomColor();
+        const size = currentSize / goldenRatio;
+        const x = generateRandomPosition(width - size);
+        const y = generateRandomPosition(height - size);
+        const angle = generateProportionalAngle(step);
+        const opacity = 1 / goldenRatio;
+        const glow = (step % 2 === 0) ? 20 : 10;
+
+        const fibonacciNumber = generateFibonacci(step);
+        const silverNumber = generateSilverSequence(step);
+        const plasticNumber = generatePlasticSequence(step);
+        const phiOffsetX = (fibonacciNumber % 2 === 0) ? size / phi : -size / phi;
+        const phiOffsetY = (fibonacciNumber % 2 !== 0) ? size / phi : -size / phi;
+
+        let adjustedX, adjustedY;
+
+        switch (startingCorner) {
+            case 0:
+                adjustedX = (startX + x + phiOffsetX) % width;
+                adjustedY = (startY + y + phiOffsetY) % height;
+                break;
+            case 1:
+                adjustedX = (startX - x + phiOffsetX) % width;
+                adjustedY = (startY + y + phiOffsetY) % height;
+                break;
+            case 2:
+                adjustedX = (startX + x + phiOffsetX) % width;
+                adjustedY = (startY - y + phiOffsetY) % height;
+                break;
+            case 3:
+                adjustedX = (startX - x + phiOffsetX) % width;
+                adjustedY = (startY - y + phiOffsetY) % height;
+                break;
+        }
+
+        const extraGlow = (silverNumber % 2 === 0) ? 30 : 15;
+        const plasticRotation = (plasticNumber % 3 === 0) ? angle / plasticNumber : angle * plasticNumber;
+
+        drawBlock(ctx, adjustedX, adjustedY, size, color, plasticRotation, opacity, glow + extraGlow);
+
+        specs.push({
+            description: `Square at (${adjustedX}, ${adjustedY}) with size ${size}, angle ${plasticRotation} degrees, opacity ${opacity}, glow ${glow + extraGlow}, and z-index ${generateProportionalZIndex(step)}, in proportion to the golden ratio, phi, silver ratio, and plastic number.`,
+            position: `(${adjustedX}, ${adjustedY})`,
+            size: size,
+            color: color,
+            angle: plasticRotation,
+            opacity: opacity,
+            glow: glow + extraGlow,
+            zIndex: generateProportionalZIndex(step),
+            relationToGoldenRatio: {
+                size: `Size is proportional to the golden ratio: ${size} / ${currentSize} ≈ ${goldenRatio}.`,
+                angle: `Angle is proportional to the golden ratio and plastic number: ${plasticRotation}.`,
+                opacity: `Opacity is inversely proportional to the golden ratio: ${opacity}.`,
+                position: `Position adjusted with phi offset: (${x} + ${phiOffsetX} ≈ ${adjustedX}, ${y} + ${phiOffsetY} ≈ ${adjustedY}).`,
+                zIndex: `Z-index adjusted in proportion to the golden ratio: ${generateProportionalZIndex(step)}.`,
+                fibonacci: `Position influenced by Fibonacci sequence number: ${fibonacciNumber}.`,
+                glow: `Glow intensity alternates in proportion to the golden ratio and silver ratio: ${glow + extraGlow}.`,
+                silver: `Extra glow influenced by the silver ratio: ${extraGlow}.`,
+                plastic: `Rotation influenced by the plastic number: ${plasticRotation}.`
+            }
+        });
+
+        currentSize /= goldenRatio;
+        step++;
+    }
+
+    return {
+        image: canvas.toBuffer(),
+        specs
+    };
+}
+
 app.get('/', async (req, res) => {
-    const { image, specs } = generateFractalImage();
+    const { image, specs } = generateEnhancedFractalImage();
     const css = fs.readFileSync(path.join(__dirname, 'styles.css'), 'utf8');
     const highlightedSpecs = hljs.highlight(JSON.stringify(specs, null, 2), { language: 'json' }).value;
 
@@ -221,6 +343,10 @@ app.get('/', async (req, res) => {
             <svg class="button-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M17.65 6.35C16.2 4.9 14.21 4 12 4 7.58 4 4 7.58 4 12s3.58 8 8 8c3.93 0 7.19-2.86 7.88-6.65h-2.08c-.64 2.33-2.74 4-5.32 4-3.04 0-5.5-2.46-5.5-5.5s2.46-5.5 5.5-5.5c1.53 0 2.9.63 3.88 1.62l-2.88 2.88H20V4l-2.35 2.35z"/></svg>
             Generate 2.0
           </button>
+          <button id="phiSquaresEnhanced-button" onclick="loadImage('phiSquaresEnhanced')">
+            <svg class="button-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M17.65 6.35C16.2 4.9 14.21 4 12 4 7.58 4 4 7.58 4 12s3.58 8 8 8c3.93 0 7.19-2.86 7.88-6.65h-2.08c-.64 2.33-2.74 4-5.32 4-3.04 0-5.5-2.46-5.5-5.5s2.46-5.5 5.5-5.5c1.53 0 2.9.63 3.88 1.62l-2.88 2.88H20V4l-2.35 2.35z"/></svg>
+            Generate 3.0 Enhanced
+          </button>
         </div>
         <a href="https://opensea.io/collection/phisquares" target="_blank">
           <img id="generated-image" src="data:image/png;base64,${image.toString('base64')}" alt="Generated Image">
@@ -228,15 +354,15 @@ app.get('/', async (req, res) => {
       </div>
       <div class="description-box" id="description-box"></div>
       <pre id="json-specs"><code class="json">${highlightedSpecs}</code><button class="copy-button" onclick="copyToClipboard()">Copy JSON</button></pre>
-      <div class="quote-box" id="quote-box-1">"I feel like I'm looking at the stars when I see these pieces, they truly capture the essence of constellations."</div>
-      <div class="quote-box" id="quote-box-2">"It's amazing, almost 80% of the phiSquares I generate look stunning, I can't stop admiring them."</div>
-      <div class="quote-box" id="quote-box-3">"These images have a sense of movement and life, I even see faces in some of them."</div>
-      <div class="quote-box" id="quote-box-4">"This art seamlessly blends mathematical precision with aesthetic beauty, creating mesmerizing results."</div>
-      <div class="quote-box" id="quote-box-5">"The glow effect adds a magical touch, making each square feel like it's illuminated from within."</div>
+      <div class="quote-box" id="quote-box-1">"Sometimes these remind me of actual star formations or constellations."</div>
+      <div class="quote-box" id="quote-box-2">"It's crazy, something like 80% of the phiSquares I generate look stunning, I can't stop admiring them."</div>
+      <div class="quote-box" id="quote-box-3">"These images have a sense of movement and life, I even see faces or critters in some of them."</div>
+      <div class="quote-box" id="quote-box-4">"For being generative art, these really capture an organic, life-like feel."</div>
+      <div class="quote-box" id="quote-box-5">"I like the glowy squares."</div>
       <div class="quote-box" id="quote-box-6">"The use of the golden ratio and Fibonacci sequence creates a perfect balance of harmony and chaos."</div>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
       <script>
-        const text1 = "The process begins with a transparent canvas where the algorithm layers squares, each progressively smaller, guided by the Golden Ratio. Using randomization and Fibonacci Sequence calculations, the position, color, angle, opacity, and glow of each square are determined. Phi offsets influence placement and rotation, while alternating glow intensities and z-index adjustments enhance visual depth.";
+        const text1 = "The process begins with a transparent canvas where the algorithm layers squares, each progressively smaller, guided by the Golden Ratio. Using randomization and Fibonacci Sequence calculations, the position, color, angle, opacity, and glow of each square are determined. Phi offsets influence placement and rotation, while the silver ratio affects glow intensity and the plastic number guides rotation adjustments. Starting from a random corner, alternating glow intensities, z-index adjustments, and proportional relationships enhance visual depth and harmony.";
         const text2 = "These ratios craft images imbued with motion, life, and elegance, blending art and science to showcase intricate and delightful variations achieved only through these mathematical principles.";
         let index = 0;
         let currentText = text1;
@@ -289,8 +415,8 @@ app.get('/', async (req, res) => {
               setTimeout(() => {
                 quote.style.opacity = '0';
               }, 5000);
+              delay += Math.random() * 10000 + 10000;
             }, delay);
-            delay += 40000;
           });
         }
 
@@ -309,6 +435,8 @@ app.get('/api/generate', (req, res) => {
     let image, specs;
     if (type === 'phiSquaresAlpha') {
         ({ image, specs } = generateAlphaFractalImage());
+    } else if (type === 'phiSquaresEnhanced') {
+        ({ image, specs } = generateEnhancedFractalImage());
     } else {
         ({ image, specs } = generateFractalImage());
     }
