@@ -362,8 +362,8 @@ app.get('/', async (req, res) => {
       <div class="quote-box" id="quote-box-6">"The use of the golden ratio and Fibonacci sequence creates a perfect balance of harmony and chaos."</div>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
       <script>
-        const text1 = "The process begins with a transparent canvas where the algorithm layers squares, each progressively smaller, guided by the Golden Ratio. Using randomization and Fibonacci Sequence calculations, the position, color, angle, opacity, and glow of each square are determined. Phi offsets influence placement and rotation, while the silver ratio affects glow intensity and the plastic number guides rotation adjustments. Starting from a random corner, alternating glow intensities, z-index adjustments, and proportional relationships enhance visual depth and harmony.";
-        const text2 = "These ratios craft images imbued with motion, life, and elegance, blending art and science to showcase intricate and delightful variations achieved only through these mathematical principles.";
+        const text1 = "❯ The process begins with a transparent canvas where the algorithm layers squares, each progressively smaller, guided by the Golden Ratio. Using randomization and Fibonacci Sequence calculations, the position, color, angle, opacity, and glow of each square are determined. Phi offsets influence placement and rotation, while the Silver Ratio affects glow intensity and the Plastic Number guides rotation adjustments. Starting from a random corner, alternating glow intensities, z-index adjustments, and proportional relationships enhance visual depth and harmony.";
+        const text2 = "❯ These ratios craft images imbued with motion, life, and elegance, blending art and science to showcase intricate and delightful variations achieved only through these mathematical principles.";
         let index = 0;
         let currentText = text1;
 
