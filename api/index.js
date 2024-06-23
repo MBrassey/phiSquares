@@ -408,15 +408,21 @@ app.get('/', async (req, res) => {
 
         function showQuotes() {
           const quotes = document.querySelectorAll('.quote-box');
+          let lastIndex = -1;
           let delay = 25000;
           quotes.forEach((quote, index) => {
             setTimeout(() => {
-              quote.style.opacity = '1';
+              do {
+                var randomIndex = Math.floor(Math.random() * quotes.length);
+              } while (randomIndex === lastIndex);
+              lastIndex = randomIndex;
+              quotes.forEach(q => q.style.opacity = '0');
+              quotes[randomIndex].style.opacity = '1';
               setTimeout(() => {
-                quote.style.opacity = '0';
+                quotes[randomIndex].style.opacity = '0';
               }, 5000);
-              delay += Math.random() * 10000 + 10000;
             }, delay);
+            delay += Math.random() * 10000 + 10000;
           });
         }
 
